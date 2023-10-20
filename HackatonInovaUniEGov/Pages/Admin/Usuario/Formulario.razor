@@ -6,7 +6,7 @@
 
 @layout AdminLayout
 @inject ApplicationContext Context
-
+@inject NotificationService NotificationService
 
 <div class="border rounded-lg p-4 flex flex-col shadow  m-4">
     <h3 class="text-center inter-family text-3xl m-4">Formulario de Cadastro de Usuário</h3>
@@ -39,29 +39,86 @@
 
     [Parameter]
     public int? Id { get; set; }
-
-    private string email { get; set; }
-    private Usuario Usuario { get; set; } = new Usuario();
+    private Usuario Usuario { get; set; } = new();
 
     private async Task Salvar()
     {
         if (Id == null)
         {
-            await Context.Usuarios.AddAsync(Usuario);
-            await Context.SaveChangesAsync();
+            await Cadastrar();
+
             return;
         }
-         Context.Usuarios.Update(Usuario);
-         Context.SaveChanges();
-
+        Atualizar();
     }
-    
+
+    private void Atualizar()
+    {
+        try
+        {
+            Context.Usuarios.Update(Usuario);
+            Context.SaveChanges();
+            NotificationMessage message = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Sucesso!",
+                Detail = "Atualização realizada com sucesso!",
+                Duration = 4000
+            };
+            NotificationService.Notify(message);
+        }
+        catch (Exception e)
+        {
+            NotificationMessage message = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Erro!",
+                Detail = "Houve algum erro ao realizar o cadastro!",
+                Duration = 4000
+            };
+            NotificationService.Notify(message);
+        }
+    }
+
+    private async Task Cadastrar()
+    {
+        try
+        {
+            await Context.Usuarios.AddAsync(Usuario);
+            await Context.SaveChangesAsync();
+            NotificationMessage message = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Sucesso!",
+                Detail = "Cadastro realizado com sucesso!",
+                Duration = 4000
+            };
+            NotificationService.Notify(message);
+        }
+        catch (Exception e)
+        {
+            NotificationMessage message = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Erro!",
+                Detail = "Houve algum erro ao realizar o cadastro!",
+                Duration = 4000
+            };
+            NotificationService.Notify(message);
+        }
+    }
+
     protected  override async Task OnInitializedAsync()
     {
         if (Id != null)
         {
-            Usuario = await Context.Usuarios.Where(x => x.Id == Id).FirstOrDefaultAsync();
-            Usuario.Senha = "";
+            var data = await Context.Usuarios.Where(x => x.Id == Id).FirstOrDefaultAsync();
+            if (data != null)
+            {
+                Usuario = data;
+                Usuario.Senha = "";
+
+            }
         }
     }
 

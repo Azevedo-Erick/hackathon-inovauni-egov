@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 using HackatonInovaUniEGov.Data;
 using HackatonInovaUniEGov.Providers;
 using MudBlazor.Services;
+using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,7 @@ builder.Services.AddMudServices();
 builder.Services.AddDbContext<ApplicationContext>();
 builder.Services.AddScoped<AuthController>();
 builder.Services.AddScoped<AuthProvider>();
-
+builder.Services.AddRadzenComponents();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -31,7 +32,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 

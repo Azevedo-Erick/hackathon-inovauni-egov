@@ -7,7 +7,13 @@ namespace HackatonInovaUniEGov.Controller;
 
 public class AuthController
 {
+    public AuthController(ApplicationContext context)
+    {
+        Context = context;
+    }
+
     public ApplicationContext Context { get; set; }
+    
     
     
     

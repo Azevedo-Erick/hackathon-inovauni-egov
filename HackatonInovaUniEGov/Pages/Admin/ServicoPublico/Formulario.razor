@@ -5,20 +5,45 @@
 @using Microsoft.EntityFrameworkCore
 @layout AdminLayout
 @inject ApplicationContext Context
+@inject NotificationService NotificationService
 
 <div class="border rounded-lg p-4 flex flex-col shadow  m-4">
     <h3 class="text-center inter-family text-3xl m-4">Formulario de Cadastro de Serviço Público</h3>
+    
+    <div class="flex flex-row justify-between">
+        
+    <div class="flex w-3/12 self-center border flex-col justify-center items-center shadow rounded-lg p-4">
+                            <h3 class="text-3xl text-slate-700 mb-4">Imagem da Instituição</h3>
+                            <RadzenUpload Url="api/file/upload" Icon="upload" ChooseText="Enviar" Complete=@CompleteUpload>
+                            </RadzenUpload>
+    
+                            @if (ServicoPublico.ImageUrl != "")
+                            {
+                                <img class="w-80 h-80 mt-4  rounded-lg border shadow " src="@ServicoPublico.ImageUrl" alt="Uploaded Image"/>
+                            }
+                            else
+                            {
+                                <div class="w-80 h-80 mt-4 bg-slate-900 rounded-lg border shadow " src="@ServicoPublico.ImageUrl" alt="Uploaded Image"></div>
+                            }
+                        </div>
+
+        <div class="flex flex-col w-2/4 mx-auto">
+            
     <RadzenFormField Text="Nome" class="mb-4" Variant="Radzen.Variant.Flat" Style="width: 100%;">
    
         <RadzenTextBox @bind-Value="ServicoPublico.Nome" Style="width: 100%;"/>
     </RadzenFormField>
+    
     
     <RadzenFormField Text="Pontos por Avaliar" class="mb-4" Variant="Radzen.Variant.Flat" Style="width: 100%;">
        
         <RadzenNumeric @bind-Value="ServicoPublico.PontosPorAvaliar" Style="width: 100%;"/>
     </RadzenFormField>
     
-     <RadzenDropDown @bind-Value=@ServicoPublico.Categoria Data=@Context.CategoriasServicoPublico TextProperty="Nome" Style="width: 100%; max-width: 400px;" />
+     <RadzenDropDown @bind-Value=@ServicoPublico.Categoria Data=@CategoriasServicoPublico TextProperty="Nome" Style="width: 100%; max-width: 400px;" />
+        </div>
+   
+     </div>
     
     <RadzenButton class="ml-auto my-4 p-4" Variant="Radzen.Variant.Flat" Click=@(args => Salvar()) Text="Salvar" Icon="save" ButtonStyle="ButtonStyle.Success" />
     
@@ -27,29 +52,91 @@
 
 @code {
     private ServicoPublico ServicoPublico { get; set; } = new ServicoPublico();
-   
+    private List<CategoriaServicoPublico> CategoriasServicoPublico = new();
     [Parameter]
     public int? Id { get; set; }
     
     private async Task Salvar()
     {
-        ServicoPublico.ImageUrl = "aa";
         if (Id == null)
+        {
+            await Cadastrar();
+            return;
+        }
+        Atualizar();
+    }
+
+    private void Atualizar()
+    {
+        try
+        {
+            Context.ServicosPublicos.Update(ServicoPublico);
+            Context.SaveChanges();
+            NotificationMessage message = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Sucesso!",
+                Detail = "Atualização realizada com sucesso!",
+                Duration = 4000
+            };
+            NotificationService.Notify(message);
+        }
+        catch (Exception e)
+        {
+            NotificationMessage message = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Erro!",
+                Detail = "Houve algum erro ao realizar o cadastro!",
+                Duration = 4000
+            };
+            NotificationService.Notify(message);
+        }
+    }
+
+    private async Task Cadastrar()
+    {
+        try
         {
             await Context.ServicosPublicos.AddAsync(ServicoPublico);
             await Context.SaveChangesAsync();
-            return;
+
+            NotificationMessage message = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Sucesso!",
+                Detail = "Cadastro realizado com sucesso!",
+                Duration = 4000
+            };
+            NotificationService.Notify(message);
+            ServicoPublico = new();
         }
-        Context.ServicosPublicos.Update(ServicoPublico);
-        Context.SaveChanges();
+        catch (Exception e)
+        {
+            NotificationMessage message = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Erro!",
+                Detail = "Houve algum erro ao realizar o cadastro!",
+                Duration = 4000
+            };
+            NotificationService.Notify(message);
+        }
     }
 
     protected  override async Task OnInitializedAsync()
     {
+        CategoriasServicoPublico = Context.CategoriasServicoPublico.ToList();
         if (Id != null)
         {
             ServicoPublico = await Context.ServicosPublicos.Where(x => x.Id == Id).FirstOrDefaultAsync();
             return;
         }
     }
+    
+    private void CompleteUpload(UploadCompleteEventArgs args)
+    {
+        ServicoPublico.ImageUrl = args.JsonResponse.RootElement.GetProperty("url").ToString();
+    }
+
 }

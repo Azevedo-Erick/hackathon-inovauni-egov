@@ -2,9 +2,10 @@
 @using HackatonInovaUniEGov.Shared.Layouts
 @using HackatonInovaUniEGov.Data
 @using HackatonInovaUniEGov.Models
+@using Microsoft.EntityFrameworkCore
 @layout AdminLayout
 @inject ApplicationContext Context
-
+@inject NotificationService NotificationService
 <div class="border rounded-lg p-4 flex flex-col shadow  m-4">
     <h3 class="text-center inter-family text-3xl m-4">Formulario de Categoria de Serviço Público</h3>
     <RadzenFormField Text="Nome" class="mb-4" Variant="Radzen.Variant.Flat" Style="width: 100%;">
@@ -27,8 +28,79 @@
     {
         if (Id == null)
         {
+            Cadastrar();
+            return;
+
+        }
+        Atualizar();
+    }
+
+    private async Task Cadastrar()
+    {
+        try
+        {
             Context.CategoriasServicoPublico.Add(CategoriaServicoPublico);
             Context.SaveChanges();
+            NotificationMessage message = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Sucesso!",
+                Detail = "Cadastro realizado com sucesso!",
+                Duration = 4000
+            };
+            NotificationService.Notify(message);
+            CategoriaServicoPublico = new CategoriaServicoPublico();
+        }
+        catch (Exception e)
+        {
+            NotificationMessage message = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Erro!",
+                Detail = "Houve algum erro ao realizar o cadastro!",
+                Duration = 4000
+            };
+            NotificationService.Notify(message);
+        }
+    }
+    
+    private async Task Atualizar()
+    {
+        try
+        {
+            Context.CategoriasServicoPublico.Update(CategoriaServicoPublico);
+            Context.SaveChanges();
+            NotificationMessage message = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Sucesso!",
+                Detail = "Atualização realizada com sucesso!",
+                Duration = 4000
+            };
+            NotificationService.Notify(message);
+        }
+        catch (Exception e)
+        {
+            NotificationMessage message = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Erro!",
+                Detail = "Houve algum erro ao realizar o cadastro!",
+                Duration = 4000
+            };
+            NotificationService.Notify(message);
+        }
+    }
+    
+    protected  override async Task OnInitializedAsync()
+    {
+        if (Id != null)
+        {
+            var data = await Context.CategoriasServicoPublico.Where(x => x.Id == Id).FirstOrDefaultAsync();
+            if (data != null)
+            {
+                CategoriaServicoPublico = data;
+            }
         }
     }
 

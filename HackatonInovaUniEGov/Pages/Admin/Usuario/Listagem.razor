@@ -7,6 +7,8 @@
 @layout AdminLayout
 @inject ApplicationContext Context
 @inject NavigationManager Navigation
+@inject NotificationService NotificationService
+@inject IDialogService DialogService
 <div class="border rounded-lg p-4 flex flex-col shadow m-4">
     
 <h3 class="text-center text-3xl inter-family my-4">Listagem de Usuários</h3>
@@ -51,18 +53,47 @@
 
     private async Task Deletar(int valueId)
     {
-        try
+        
+        bool? result = await DialogService.ShowMessageBox(
+            "Alerta",
+            "O elemento deletado não pode ser recuperado! Tem certeza que deseja continuar?",
+            yesText: "Sim!", cancelText: "Cancelar");
+
+        if (result != null)
         {
-            var data = await Context.Usuarios.Where(x => x.Id == valueId).FirstOrDefaultAsync();
-            Context.Usuarios.Remove(data);
-            Context.SaveChangesAsync();
-            QueryData();
+            try
+            {
+                var data = await Context.Usuarios.Where(x => x.Id == valueId).FirstOrDefaultAsync();
+                Context.Usuarios.Remove(data);
+                await Context.SaveChangesAsync();
+                NotificationMessage message = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Sucesso!",
+                    Detail = "Deleção realizada com sucesso!",
+                    Duration = 4000
+                };
+                NotificationService.Notify(message);
+
+                QueryData();
+
+            }
+            catch (Exception e)
+            {
+                NotificationMessage message = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Atenção!",
+                    Detail = e.Message,
+                    Duration = 4000
+                };
+                NotificationService.Notify(message);
+            }
         }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
+
+        StateHasChanged();
+
+        
     }
     
     protected  override async Task OnInitializedAsync()

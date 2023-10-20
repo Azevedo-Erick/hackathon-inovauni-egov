@@ -2,6 +2,7 @@
 @using HackatonInovaUniEGov.Shared.Layouts
 @using HackatonInovaUniEGov.Data
 @using HackatonInovaUniEGov.Models
+@using Microsoft.EntityFrameworkCore
 @layout PortalLayout
 @inject NavigationManager Navigation
 @inject ApplicationContext Context
@@ -12,19 +13,19 @@
         <h3 class="m-4 text-center text-xl inter-family">Órgãos com melhores avaliações</h3>
 
         <div class="flex flex-row overflow-x-auto gap-4  bg-header-auth rounded-lg p-4 m-4 ">
-             @for (var i = 0; i < 7; i++)
-             {
+            @foreach (var servicoPublico in ServicosPublicos)
+            {
                  <div style="min-width: 300px;" class="flex flex-justify flex-col  rounded-lg  justify-between bg-gray-200">
                      <div class="w-full flex-row flex justify-between mb-8 p-4">
                          <div class="px-4 py-2 bg-green-600 rounded-lg text-white">Palmas</div>
-                         <div class="px-4 py-2 bg-yellow-600 rounded-lg text-white">Transporte</div>
+                         <div class="px-4 py-2 bg-yellow-600 rounded-lg text-white">@servicoPublico.Categoria.Nome</div>
 
                      </div>
 
                      <div class="flex flex-col items-center text-center my-auto">
-                         <span>Empresa Brasileira de Correios e Telégrafos</span>
+                         <span>@servicoPublico.Nome</span>
                          <RadzenRating bind-Value="2" class="my-4" ReadOnly="true"/>
-                         <RadzenButton Variant="Radzen.Variant.Text" class="text-center inter-family"  Text="Ver detalhes"  Click=@(args => DetalhesInstituicao(i))   ButtonStyle="ButtonStyle.Warning"/>
+                         <RadzenButton Variant="Radzen.Variant.Text" class="text-center inter-family"  Text="Ver detalhes"  Click=@(args => DetalhesInstituicao(servicoPublico.Id))   ButtonStyle="ButtonStyle.Warning"/>
                          
                      </div>
 
@@ -32,7 +33,7 @@
                      <div class="h-16 flex items-center justify-center w-full bg-white rounded-b-xl mt-8">
                          
 
-                         <RadzenButton Variant="Radzen.Variant.Text" class="text-center inter-family"  Text="Avaliar"  Click=@(args => AvaliarInstituicao(i))  ButtonStyle="ButtonStyle.Warning"/>
+                         <RadzenButton Variant="Radzen.Variant.Text" class="text-center inter-family"  Text="Avaliar"  Click=@(args => AvaliarInstituicao(servicoPublico.Id))  ButtonStyle="ButtonStyle.Warning"/>
 
                      </div>
                  </div>
@@ -48,11 +49,11 @@
 
 
                     <RadzenFormField class="w-6/12" Text="Nome" Variant="Radzen.Variant.Flat" Style="width: 100%;">
-                        <RadzenTextBox @bind-Value="email" Style="width: 100%;"/>
+                        <RadzenTextBox @bind-Value="NomeFiltro" Style="width: 100%;"/>
                     </RadzenFormField>
 
 
-                    <RadzenButton class="w-3/12 ml-8" type="submit" Text="Pesquisar" ButtonStyle="ButtonStyle.Warning"/>
+                    <RadzenButton class="w-3/12 ml-8"  Click="Buscar" Text="Pesquisar" ButtonStyle="ButtonStyle.Warning"/>
               
                     </div>
 
@@ -60,25 +61,25 @@
         
             
             <div class="flex flex-row w-10/12 flex-wrap gap-4 bg-header-auth  justify-between rounded-lg p-4 m-4 ">
-                @for (var i = 0; i < 21; i++)
+                @foreach (var servicoPublico in ServicosPublicos)
                 {
                     <div class="w-80  flex flex-justify flex-col  rounded-lg  justify-between bg-gray-200">
                         <div class="w-full flex-row flex justify-between mb-8 p-4">
                             <div class="px-4 py-2 bg-green-600 rounded-lg text-white">Palmas</div>
-                            <div class="px-4 py-2 bg-yellow-600 rounded-lg text-white">Transporte</div>
+                            <div class="px-4 py-2 bg-yellow-600 rounded-lg text-white">@servicoPublico.Categoria.Nome</div>
 
                         </div>
 
                         <div class="flex flex-col items-center my-auto">
-                            <span>Empresa Brasileira de Correios e Telégrafos</span>
-                            <RadzenRating bind-Value="2" class="my-4" ReadOnly="true"/>
-                         <RadzenButton Variant="Radzen.Variant.Text" class="text-center inter-family"  Click=@(args => DetalhesInstituicao(i))   Text="Ver detalhes"  ButtonStyle="ButtonStyle.Warning"/>
+                            <span>@servicoPublico.Nome</span>
+                            <RadzenRating bind-Value=4 class="my-4" ReadOnly="true"/>
+                         <RadzenButton Variant="Radzen.Variant.Text" class="text-center inter-family"  Click=@(args => DetalhesInstituicao(servicoPublico.Id))   Text="Ver detalhes"  ButtonStyle="ButtonStyle.Warning"/>
                             
                         </div>
 
 
                         <div class="h-16 flex items-center justify-center w-full bg-white rounded-b-xl mt-8">
-                                                     <RadzenButton Variant="Radzen.Variant.Text" class="text-center inter-family"  Click=@(args => AvaliarInstituicao(i)) Text="Avaliar"  ButtonStyle="ButtonStyle.Warning"/>
+                                                     <RadzenButton Variant="Radzen.Variant.Text" class="text-center inter-family"  Click=@(args => AvaliarInstituicao(servicoPublico.Id)) Text="Avaliar"  ButtonStyle="ButtonStyle.Warning"/>
 
 
                         </div>
@@ -96,8 +97,30 @@
     private string email { get; set; }
     private string NomeFiltro { get; set; }
 
-    private List<ServicoPublico> ServicosPublicos { get; set; } = new();
-    private List<ServicoPublico> MelhoresServicosPublicos { get; set; } = new();
+    private List<ServicoPublico> ServicosPublicos { get; set; } =new  List<ServicoPublico>
+    {
+        new ServicoPublico
+        {
+            Categoria = new CategoriaServicoPublico
+            {
+                Nome = ""
+            },
+            Nome = "",
+            
+        }
+    };
+    private List<ServicoPublico> MelhoresServicosPublicos { get; set; } = new  List<ServicoPublico>
+    {
+        new ServicoPublico
+        {
+            Categoria = new CategoriaServicoPublico
+            {
+                Nome = ""
+            },
+            Nome = "",
+            
+        }
+    };
 
     
     private  void AvaliarInstituicao(int i)
@@ -118,9 +141,20 @@
 
     private void QueryData()
     {
-        ServicosPublicos = Context.ServicosPublicos.ToList();
-        MelhoresServicosPublicos = Context.ServicosPublicos.ToList();
-        
+        ServicosPublicos = Context.ServicosPublicos.Include(x => x.Questionarios)
+            .Include(x => x.Categoria).ToList();
+        MelhoresServicosPublicos = Context.ServicosPublicos
+            .Include(x => x.Questionarios)
+            .Include(x => x.Categoria)
+            .Where(x => x.Questionarios.Any()) 
+            .OrderByDescending(x => x.Questionarios.Average(y => y.AvaliacaoMedia))
+            .ToList();
+
+    }
+
+    private void Buscar()
+    {
+        ServicosPublicos = Context.ServicosPublicos.Where(x => x.Nome.Contains(NomeFiltro)).ToList();
     }
 
 }

@@ -9,5 +9,5 @@ public class Usuario
     public string Senha { get; set; }
     public string Cpf { get; set; }
     public int Pontos { get; set; }
-    public List<Questionario> Questionarios { get; set; }
+    public List<Questionario> Questionarios { get; set; } = new List<Questionario>();
 }

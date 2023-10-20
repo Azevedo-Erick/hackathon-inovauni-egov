@@ -7,7 +7,7 @@
 @inject NavigationManager Navigation
 @inject ApplicationContext Context
 <div class="w-full flex flex-col">
-    <div class="w-11/12 self-center mx-2 mt-8 rounded-lg bg-black h-96"></div>
+    <img class="w-11/12 self-center mx-2 mt-8 rounded-lg h-96 " src="@ServicoPublico.ImageUrl">
     
     
     <RadzenButton class="m-4 w-2/12 py-4 self-center inter-family"  Click="Avaliar" Text="Avaliar" ButtonStyle="ButtonStyle.Primary"/>
@@ -38,8 +38,12 @@
                                     
                                 </div>
                 
-                <div style="background-color: #214266" class="w-96 h-96 rounded-lg shadow self-center">
-                    <h3 class="text-white text-center my-4 inter-family text-2xl">Avaliação Geral</h3>
+                <div style="background-color: #214266" class="w-96 h-96 rounded-lg flex flex-col shadow self-center">
+                    <h3 class="text-white text-center mt-8 inter-family text-2xl">Avaliação Geral</h3>
+                    <p class="text-white text-center  inter-family text-6xl my-auto">
+                    @(ServicoPublico.Questionarios.Count>0? ServicoPublico.Questionarios.Average(x=>x.AvaliacaoMedia):0)
+                        
+                    </p>
                 </div>
                 
                 <div class="flex flex-col ">
@@ -117,21 +121,28 @@
     <div class="flex flex-col my-8">
         
         <h2 class="text-2xl text-center text-black inter-family my-4">Avaliações</h2>
-        <div class="flex flex-row  justify-evenly p-4 gap-4 flex-wrap bg-sky-100">
-            @for (var i = 0; i < 9; i++)
+        <div class="flex flex-row  justify-evenly p-4 w-11/12 self-center rounded-lg gap-4 flex-wrap bg-sky-100">
+            @if (ServicoPublico.Questionarios.Count == 0)
+            {
+                <p>Parece que não temos nada aqui</p>
+            }
+            else
+            {
+                
+            @foreach (var questionario in ServicoPublico.Questionarios)
             {
                 <div class="bg-white w-80 shadow rounded-lg border">
                     <div class="flex flex-row  p-4">
                         <div class="w-16 h-16 bg-black mr-4 rounded-full"></div>
                         <div class="flex flex-col">
                             <div class="flex items-center justify-between flex-row">
-                                <h3>Nome</h3>
-                                <img  src="images/aspas.svg"/>
+                                <h3>@questionario.Usuario.Nome</h3>
+                                <img src="images/aspas.svg"/>
                             </div>
-                            
+
                             <div class="flex flex-row items-center justify-center">
-                                <h3 class="mt-2 mr-4">4.5</h3>
-                                <RadzenRating Readonly=@true @bind-Value=@value />
+                                <h3 class="mt-2 mr-4">@questionario.AvaliacaoMedia</h3>
+                                <RadzenRating Readonly=@true @bind-Value=@questionario.AvaliacaoMedia/>
                             </div>
                         </div>
                     </div>
@@ -140,6 +151,8 @@
                     </div>
                 </div>
             }
+            }
+
         </div>
     </div>
     
@@ -152,7 +165,16 @@
     public int Id { get; set; }
 
     private int value { get; set; } = 4;
-    private ServicoPublico ServicoPublico = new ServicoPublico();
+    private ServicoPublico ServicoPublico = new ServicoPublico
+    {
+        Questionarios = new List<Questionario>
+        {
+            new Questionario
+            {
+                Usuario = {}
+            }
+        }
+    };
 
     private void Avaliar()
     {
@@ -166,7 +188,7 @@
 
     private void QueryData()
     {
-        var data = Context.ServicosPublicos.Include(x=>x.Questionarios).FirstOrDefault(x => x.Id == Id);
+        var data = Context.ServicosPublicos.Include(x=>x.Questionarios).ThenInclude(y=>y.Usuario).FirstOrDefault(x => x.Id == Id);
         if (data != null)
         {
             ServicoPublico = data;
