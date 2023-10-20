@@ -4,23 +4,24 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace HackatonInovaUniEGov.Data.Mappings;
 
-public class PerguntaNumericaMapping : IEntityTypeConfiguration<PerguntaNumerica>
+public class RespostaPerguntaMapping : IEntityTypeConfiguration<RespostaPergunta>
 {
-    public void Configure(EntityTypeBuilder<PerguntaNumerica> builder)
+    public void Configure(EntityTypeBuilder<RespostaPergunta> builder)
     {
-        builder.ToTable("pergunta_numerica");
+        builder.ToTable("respostas_perguntas");
 
 
         builder.Property(e => e.Id)
             .HasColumnName("id");
 
 
-        builder.Property(e => e.Questao)
-            .HasMaxLength(255)
-            .HasColumnName("questao");
+        builder.HasOne(e => e.Questao)
+            .WithMany(x=>x.RespostasPerguntas);
         
         builder.Property(e => e.Nota)
             .HasMaxLength(255)
             .HasColumnName("nota");
+        
+
     }
 }

@@ -37,61 +37,42 @@ namespace HackatonInovaUniEGov.Migrations
                     b.ToTable("categoria_servico_publico", (string)null);
                 });
 
-            modelBuilder.Entity("HackatonInovaUniEGov.Models.PerguntaNumerica", b =>
+            modelBuilder.Entity("HackatonInovaUniEGov.Models.Questao", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<int>("Nota")
-                        .HasMaxLength(255)
-                        .HasColumnType("int")
-                        .HasColumnName("nota");
-
-                    b.Property<string>("Questao")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("questao");
-
-                    b.Property<int>("QuestionarioId")
+                    b.Property<int?>("CategoriaServicoPublicoId1")
                         .HasColumnType("int");
+
+                    b.Property<bool>("MostarMediaNoPortal")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Texto")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("texto");
+
+                    b.Property<string>("TipoPergunta")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("TituloParaOPortal")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("slug")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("slug");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("QuestionarioId");
+                    b.HasIndex("CategoriaServicoPublicoId1");
 
-                    b.ToTable("pergunta_numerica", (string)null);
-                });
-
-            modelBuilder.Entity("HackatonInovaUniEGov.Models.PerguntaTextual", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Questao")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("questao");
-
-                    b.Property<int>("QuestionarioId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Responsta")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("resposta");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("QuestionarioId");
-
-                    b.ToTable("pergunta_texual", (string)null);
+                    b.ToTable("questoes", (string)null);
                 });
 
             modelBuilder.Entity("HackatonInovaUniEGov.Models.Questionario", b =>
@@ -126,6 +107,36 @@ namespace HackatonInovaUniEGov.Migrations
                     b.HasIndex("UsuarioId");
 
                     b.ToTable("questionario", (string)null);
+                });
+
+            modelBuilder.Entity("HackatonInovaUniEGov.Models.RespostaPergunta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int?>("Nota")
+                        .HasMaxLength(255)
+                        .HasColumnType("int")
+                        .HasColumnName("nota");
+
+                    b.Property<int>("QuestaoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuestionarioId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Resposta")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestaoId");
+
+                    b.HasIndex("QuestionarioId");
+
+                    b.ToTable("respostas_perguntas", (string)null);
                 });
 
             modelBuilder.Entity("HackatonInovaUniEGov.Models.ServicoPublico", b =>
@@ -199,26 +210,13 @@ namespace HackatonInovaUniEGov.Migrations
                     b.ToTable("usuarios", (string)null);
                 });
 
-            modelBuilder.Entity("HackatonInovaUniEGov.Models.PerguntaNumerica", b =>
+            modelBuilder.Entity("HackatonInovaUniEGov.Models.Questao", b =>
                 {
-                    b.HasOne("HackatonInovaUniEGov.Models.Questionario", "Questionario")
-                        .WithMany("PerguntasNumericas")
-                        .HasForeignKey("QuestionarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("HackatonInovaUniEGov.Models.CategoriaServicoPublico", "CategoriaServicoPublico")
+                        .WithMany("Questoes")
+                        .HasForeignKey("CategoriaServicoPublicoId1");
 
-                    b.Navigation("Questionario");
-                });
-
-            modelBuilder.Entity("HackatonInovaUniEGov.Models.PerguntaTextual", b =>
-                {
-                    b.HasOne("HackatonInovaUniEGov.Models.Questionario", "Questionario")
-                        .WithMany("PerguntasTextuais")
-                        .HasForeignKey("QuestionarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Questionario");
+                    b.Navigation("CategoriaServicoPublico");
                 });
 
             modelBuilder.Entity("HackatonInovaUniEGov.Models.Questionario", b =>
@@ -240,6 +238,25 @@ namespace HackatonInovaUniEGov.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("HackatonInovaUniEGov.Models.RespostaPergunta", b =>
+                {
+                    b.HasOne("HackatonInovaUniEGov.Models.Questao", "Questao")
+                        .WithMany("RespostasPerguntas")
+                        .HasForeignKey("QuestaoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HackatonInovaUniEGov.Models.Questionario", "Questionario")
+                        .WithMany("RespostasPergunta")
+                        .HasForeignKey("QuestionarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Questao");
+
+                    b.Navigation("Questionario");
+                });
+
             modelBuilder.Entity("HackatonInovaUniEGov.Models.ServicoPublico", b =>
                 {
                     b.HasOne("HackatonInovaUniEGov.Models.CategoriaServicoPublico", "Categoria")
@@ -253,14 +270,19 @@ namespace HackatonInovaUniEGov.Migrations
 
             modelBuilder.Entity("HackatonInovaUniEGov.Models.CategoriaServicoPublico", b =>
                 {
+                    b.Navigation("Questoes");
+
                     b.Navigation("ServicosPublicos");
+                });
+
+            modelBuilder.Entity("HackatonInovaUniEGov.Models.Questao", b =>
+                {
+                    b.Navigation("RespostasPerguntas");
                 });
 
             modelBuilder.Entity("HackatonInovaUniEGov.Models.Questionario", b =>
                 {
-                    b.Navigation("PerguntasNumericas");
-
-                    b.Navigation("PerguntasTextuais");
+                    b.Navigation("RespostasPergunta");
                 });
 
             modelBuilder.Entity("HackatonInovaUniEGov.Models.ServicoPublico", b =>

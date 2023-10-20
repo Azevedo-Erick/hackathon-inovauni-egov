@@ -23,10 +23,7 @@ public class QuestionarioMapping : IEntityTypeConfiguration<Questionario>
         builder.Property(e => e.Data)
             .HasColumnName("data");
         
-        builder.HasMany(x => x.PerguntasNumericas)
-            .WithOne(x => x.Questionario);
-        
-        builder.HasMany(x => x.PerguntasTextuais)
+        builder.HasMany(x => x.RespostasPergunta)
             .WithOne(x => x.Questionario);
 
         builder.HasOne(x => x.ServicoPublico).WithMany(x => x.Questionarios);

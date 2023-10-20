@@ -143,26 +143,26 @@
 
         var perguntasDeZeroACem = RespostasQuestoes.
             Where(x => x.TipoDePergunta == TipoPergunta.ZERO_ATE_CEM)
-            .Select(x => new PerguntaNumerica
+            .Select(x => new RespostaPergunta
             {
                 Nota = x.Avaliacao * 20,
-                Questao = x.Questao
+                // Questao = x.Questao
             });
         
         var perguntasZeroACinco = RespostasQuestoes.
             Where(x => x.TipoDePergunta == TipoPergunta.UM_ATE_CINCO)
-            .Select(x => new PerguntaNumerica
+            .Select(x => new RespostaPergunta
             {
                 Nota = x.Avaliacao * 20,
-                Questao = x.Questao
+                // Questao = x.Questao
             });
         
         var perguntasTextuais = RespostasQuestoes.
             Where(x => x.TipoDePergunta == TipoPergunta.TEXTO)
-            .Select(x => new PerguntaTextual
+            .Select(x => new 
             {
-                Responsta = x.Texto,
-                Questao = x.Questao
+                // Responsta = x.Texto,
+                // Questao = x.Questao
             });
         
         var mediaDeUmACinco = RespostasQuestoes.
@@ -177,9 +177,9 @@
         Questionario dados = new Questionario
         {
             AvaliacaoMedia = mediaGeral,
-            PerguntasNumericas =  new List<PerguntaNumerica>(),
+            // PerguntasNumericas =  new List<RespostaPergunta>(),
             ValorPontos = ServicoPublico.PontosPorAvaliar,
-            PerguntasTextuais = perguntasTextuais.ToList(),
+            // PerguntasTextuais = perguntasTextuais.ToList(),
             Data = DateTime.Now,
             ServicoPublico = ServicoPublico,
             Usuario = Usuario

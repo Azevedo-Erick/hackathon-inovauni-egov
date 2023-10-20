@@ -24,8 +24,10 @@ public class ApplicationContext  : DbContext
     }
 
     public virtual DbSet<CategoriaServicoPublico> CategoriasServicoPublico { get; set; } = null!;
-    public virtual DbSet<PerguntaNumerica> PerguntasNumericas { get; set; } = null!;
-    public virtual DbSet<PerguntaTextual> PerguntasTextuais { get; set; } = null!;
+    public virtual DbSet<Questao> Questoes { get; set; } = null!;
+
+    public virtual DbSet<RespostaPergunta> RespostasPerguntas { get; set; } = null!;
+
     public virtual DbSet<Questionario> Questionarios { get; set; } = null!;
     public virtual DbSet<ServicoPublico> ServicosPublicos { get; set; } = null!;
     public virtual DbSet<Usuario> Usuarios { get; set; } = null!;
