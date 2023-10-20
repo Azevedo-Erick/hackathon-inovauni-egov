@@ -1,0 +1,74 @@
+@page "/Admin/CategoriaServicoPublico/Listagem"
+@using HackatonInovaUniEGov.Shared.Layouts
+@using HackatonInovaUniEGov.Data
+@using HackatonInovaUniEGov.Models
+@layout AdminLayout
+@inject ApplicationContext Context
+@inject NavigationManager Navigation
+
+
+<div class="border rounded-lg p-4 flex flex-col shadow m-4">
+<h3 class="text-center text-3xl inter-family my-4">Listagem de Categorias de Serviços Públicos</h3>
+
+ <RadzenButton class="ml-auto my-4" Variant="Radzen.Variant.Flat" Click=@(args => GoToForm()) Text="Novo" Icon="add" ButtonStyle="ButtonStyle.Success" />
+<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+    Data="@CategoriasServicoPublico" TItem="CategoriaServicoPublico" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+    <Columns>
+        <RadzenDataGridColumn TItem="CategoriaServicoPublico" Property="Id" Filterable="false" Title="ID" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="CategoriaServicoPublico" Property="Nome" Title="Nome" Frozen="true" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center" >
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="CategoriaServicoPublico"  Title="Ações" Width="160px" Sortable="false" Filterable="false">
+        
+        <Template Context="data">
+            <RadzenButton Click=@(args => Editar(data.Id)) Text="Editar" Icon="edit" ButtonStyle="ButtonStyle.Warning"/>
+            <RadzenButton Click=@(args => Deletar(data.Id)) Text="Excluir" Icon="delete" ButtonStyle="ButtonStyle.Danger"/>
+     
+        </Template>
+        </RadzenDataGridColumn>
+
+    </Columns>
+</RadzenDataGrid>
+</div>
+
+@code {
+
+    public List<CategoriaServicoPublico> CategoriasServicoPublico { get; set; } = new();
+    
+    private async Task Editar(int valueId)
+    {
+        Navigation.NavigateTo("/Admin/CategoriaServicoPublico/Formulario/"+valueId);
+
+    }
+
+    private async Task Deletar(int valueId)
+    {
+        var element = Context.CategoriasServicoPublico.FirstOrDefault(x => x.Id == valueId);
+
+        if (element == null)
+        {
+            return;
+        }
+
+        Context.CategoriasServicoPublico.Remove(element);
+        Context.SaveChanges();
+        QueryData();
+    }
+
+    private async Task GoToForm()
+    {
+        Navigation.NavigateTo("/Admin/CategoriaServicoPublico/Formulario/");
+
+    }
+    
+    protected  override async Task OnInitializedAsync()
+    {
+        QueryData();
+    }
+
+    private void QueryData()
+    {
+        CategoriasServicoPublico = Context.CategoriasServicoPublico.ToList();
+        
+    }
+
+}

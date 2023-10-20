@@ -1,0 +1,61 @@
+@using HackatonInovaUniEGov.Providers
+@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+@inject AuthProvider AuthProvider
+
+@if (AuthProvider.GetAuthenticationStateAsync().Result.User.Identity!=null||true)
+{
+    <div class="h-16 flex flex-row justify-between items-center px-4  bg-header-auth">
+        <a href="/Portal/Index">
+
+            <img src="images/logotipo_projeto.svg" class="h-32 w-32"/>
+        </a>
+
+        <div class="flex flex-row items-center justify-center">
+
+            <img src="images/logo_sol_tocantins.svg" class="w-12 h-12"/>
+            <div class="flex color-rose-700 inter-family text-uppercase flex-col text-center ml-2 text-white text-start text-bold  text-sm">
+
+                <p>Governo Do </p>
+                <p >Tocantins</p>
+            </div>
+        </div>
+
+        <div>
+            <RadzenButton Text="Meus Pontos" Click="GoToPontos" ButtonStyle="ButtonStyle.Secondary"/>
+
+            <RadzenButton Text="Sair" ButtonStyle="ButtonStyle.Danger"/>
+        </div>
+
+
+    </div>
+
+    @Body
+}
+else
+{
+    <div class="w-screen h-screen flex items-center justify-center bg-slate-700">
+        <div class="h-96 w-1/4 shadow p-4 border rounded-xl bg-white items-center flex flex-col">
+            <h2 class="text-center text-3xl text-slate-700 mb-auto">Acesso não autorizado</h2>
+                
+            <RadzenIcon Icon="warning" Style="font-size: 96px;" class="text-4xl text-shadow-xl text-red-500  text-center" />
+                
+            <div class="px-4 py-8 bg-red-100 h-32 mt-auto mb-auto text-red-600 flex items-center text-xl rounded-lg">
+                Você não tem autorização para acessar essa página!
+            </div>
+            <RadzenButton class="mt-auto px-4 py-4" Click=@(args => Navigation.NavigateTo("/Auth/Login")) Text="Voltar"  ButtonStyle="ButtonStyle.Danger"/>
+                
+        </div>
+                
+    </div>
+}
+@code {
+
+    private void GoToPontos()
+    {
+       Navigation.NavigateTo("/Portal/Pontos");
+    }
+    
+    
+
+}

@@ -1,0 +1,35 @@
+@page "/Admin/CategoriaServicoPublico/Formulario/{id:int?}"
+@using HackatonInovaUniEGov.Shared.Layouts
+@using HackatonInovaUniEGov.Data
+@using HackatonInovaUniEGov.Models
+@layout AdminLayout
+@inject ApplicationContext Context
+
+<div class="border rounded-lg p-4 flex flex-col shadow  m-4">
+    <h3 class="text-center inter-family text-3xl m-4">Formulario de Categoria de Serviço Público</h3>
+    <RadzenFormField Text="Nome" class="mb-4" Variant="Radzen.Variant.Flat" Style="width: 100%;">
+   
+        <RadzenTextBox @bind-Value="CategoriaServicoPublico.Nome" Style="width: 100%;"/>
+    </RadzenFormField>
+    
+ <RadzenButton class="ml-auto my-4 p-4" Variant="Radzen.Variant.Flat" Click=@(args => Salvar()) Text="Salvar" Icon="save" ButtonStyle="ButtonStyle.Success" />
+    
+</div>
+
+
+@code {
+    private CategoriaServicoPublico CategoriaServicoPublico { get; set; } = new();
+
+    [Parameter]
+    public int? Id { get; set; }
+    
+    private async Task Salvar()
+    {
+        if (Id == null)
+        {
+            Context.CategoriasServicoPublico.Add(CategoriaServicoPublico);
+            Context.SaveChanges();
+        }
+    }
+
+}

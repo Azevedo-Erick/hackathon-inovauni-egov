@@ -1,0 +1,192 @@
+@page "/Portal/FormularioAvaliacaoInstituicao/{id:int}"
+@using HackatonInovaUniEGov.Shared.Layouts
+@using HackatonInovaUniEGov.ViewModels
+@using HackatonInovaUniEGov.Models
+@using HackatonInovaUniEGov.Data
+@inject NavigationManager Navigation
+@layout PortalLayout
+@inject ApplicationContext Context
+
+<div class="min-w-screen min-h-screen flex  justify-center my-8">
+<div class="w-1/2 mt-4 border shadow-xl rounded-lg p-4">
+    <h2 class="text-center text-2xl my-4 inter-family">Nos diga o que achou de {Orgao}</h2>
+    <RadzenSteps >
+        
+        <Steps>
+            <div class="p-2"></div>
+            <RadzenStepsItem Text="De 0 a 100">
+            <div class="p-4"></div>
+                @foreach (var pergunta in RespostasQuestoes.Where(x => x.TipoDePergunta == TipoPergunta.ZERO_ATE_CEM))
+                {
+                    <div class="flex flex-col mb-4">
+                        <label>@pergunta.Questao</label>
+                        <RadzenNumeric @bind-Value=@pergunta.Avaliacao />
+                    </div>
+                }
+                
+            </RadzenStepsItem>
+            <RadzenStepsItem Text="Em escala">
+            <div class="p-4"></div>
+@foreach (var pergunta in RespostasQuestoes.Where(x => x.TipoDePergunta == TipoPergunta.UM_ATE_CINCO))
+                {
+                    <div class="flex flex-col mb-4">
+                        <label>@pergunta.Questao</label>
+                        <RadzenRating @bind-Value=@pergunta.Avaliacao />
+                    </div>
+                }
+             
+
+            </RadzenStepsItem>
+
+            <RadzenStepsItem Text="Sugestões">
+            <div class="p-4"></div>
+                
+                @foreach (var pergunta in RespostasQuestoes.Where(x => x.TipoDePergunta == TipoPergunta.TEXTO))
+                                {
+                                    <div class="flex flex-col mb-4">
+                                        <label>@pergunta.Questao</label>
+                                                                   <RadzenTextArea Disabled="true" @bind-Value=@pergunta.Texto Cols="30" Rows="10" />
+                                        
+                                    </div>
+                                }
+                
+                <RadzenButton Variant="Radzen.Variant.Text" class="text-center inter-family"  Click=@(args => Salvar()) Text="Avaliar"  ButtonStyle="ButtonStyle.Warning"/>
+
+            </RadzenStepsItem>
+        </Steps>
+    </RadzenSteps>
+</div>
+    </div>
+
+
+@code {
+    private string value;
+    private int rating;
+    
+    [Parameter]
+    public int Id { get; set; }
+
+    private ServicoPublico ServicoPublico = new ServicoPublico();
+    private Usuario Usuario = new Usuario();
+
+    private List<AvaliacaoInstituicaoViewModel> RespostasQuestoes = new List<AvaliacaoInstituicaoViewModel>
+    {
+        new AvaliacaoInstituicaoViewModel
+        {
+            Questao = "Em uma escala de 0 a 100, qual é a sua avaliação do tempo de espera para ser atendido pelo órgão público?",
+         TipoDePergunta = TipoPergunta.ZERO_ATE_CEM
+            
+        },
+        new AvaliacaoInstituicaoViewModel
+        {
+            Questao = "Em uma escala de 0 a 100, como você avaliaria a eficiência dos processos do órgão público?",
+            TipoDePergunta = TipoPergunta.ZERO_ATE_CEM
+
+        },
+        new AvaliacaoInstituicaoViewModel
+        {
+            Questao = "Em uma escala de 0 a 100, quão transparente você considera o órgão público em termos de divulgação de informações?",
+            TipoDePergunta = TipoPergunta.ZERO_ATE_CEM
+
+        },
+        new AvaliacaoInstituicaoViewModel
+        {
+            Questao = "Em uma escala de 0 a 100, quão satisfeito você está com os serviços online oferecidos pelo órgão público?",
+        },
+        new AvaliacaoInstituicaoViewModel
+        {
+            Questao = "Em uma escala de 0 a 100, quão bem você acha que as instalações são mantidas?",
+            TipoDePergunta = TipoPergunta.ZERO_ATE_CEM
+
+        },
+        new AvaliacaoInstituicaoViewModel
+        {
+            Questao = "Em uma escala de 0 a 100, quão seguro você se sente em relação às áreas públicas relacionadas ao órgão público?",
+            TipoDePergunta = TipoPergunta.ZERO_ATE_CEM
+
+        },
+        new AvaliacaoInstituicaoViewModel
+        {
+            Questao = "Em uma escala de 0 a 100, qual é a sua avaliação da acessibilidade das instalações do órgão público?",
+        TipoDePergunta = TipoPergunta.ZERO_ATE_CEM
+
+        },
+        new AvaliacaoInstituicaoViewModel
+        {
+            Questao = " Qual é a sua avaliação da qualidade do atendimento ao público, em uma escala de 0 a 5 estrelas?",
+        TipoDePergunta = TipoPergunta.UM_ATE_CINCO
+
+        },
+        new AvaliacaoInstituicaoViewModel
+        {
+            Questao = "Em uma escala de 0 a 5 estrelas, quão envolvido você acha que o órgão público está com a participação dos cidadãos?"
+       ,
+            TipoDePergunta = TipoPergunta.UM_ATE_CINCO
+ 
+        },
+        new AvaliacaoInstituicaoViewModel
+        {
+            Questao = "Por favor, compartilhe seus comentários detalhados sobre sua experiência com o órgão público. Suas sugestões e feedback são importantes.",
+            TipoDePergunta = TipoPergunta.TEXTO
+        }
+
+    };
+
+
+    private async Task Salvar()
+    {
+
+        var mediaDeZeroACem = RespostasQuestoes.
+            Where(x => x.TipoDePergunta == TipoPergunta.ZERO_ATE_CEM)
+            .Sum(x => x.Avaliacao) / RespostasQuestoes.Count(x => x.TipoDePergunta == TipoPergunta.ZERO_ATE_CEM);
+
+
+        var perguntasDeZeroACem = RespostasQuestoes.
+            Where(x => x.TipoDePergunta == TipoPergunta.ZERO_ATE_CEM)
+            .Select(x => new PerguntaNumerica
+            {
+                Nota = x.Avaliacao * 20,
+                Questao = x.Questao
+            });
+        
+        var perguntasZeroACinco = RespostasQuestoes.
+            Where(x => x.TipoDePergunta == TipoPergunta.UM_ATE_CINCO)
+            .Select(x => new PerguntaNumerica
+            {
+                Nota = x.Avaliacao * 20,
+                Questao = x.Questao
+            });
+        
+        var perguntasTextuais = RespostasQuestoes.
+            Where(x => x.TipoDePergunta == TipoPergunta.TEXTO)
+            .Select(x => new PerguntaTextual
+            {
+                Responsta = x.Texto,
+                Questao = x.Questao
+            });
+        
+        var mediaDeUmACinco = RespostasQuestoes.
+            Where(x => x.TipoDePergunta == TipoPergunta.UM_ATE_CINCO)
+            .Sum(x => x.Avaliacao * 20)/ 
+                              RespostasQuestoes.Count(x => x.TipoDePergunta == TipoPergunta.UM_ATE_CINCO);
+
+        var mediaGeral = (mediaDeZeroACem + mediaDeUmACinco) / 2;
+        
+        
+        
+        Questionario dados = new Questionario
+        {
+            AvaliacaoMedia = mediaGeral,
+            PerguntasNumericas =  new List<PerguntaNumerica>(),
+            ValorPontos = ServicoPublico.PontosPorAvaliar,
+            PerguntasTextuais = perguntasTextuais.ToList(),
+            Data = DateTime.Now,
+            ServicoPublico = ServicoPublico,
+            Usuario = Usuario
+        };
+
+        Context.Questionarios.Add(dados);
+        Context.SaveChanges();
+    }
+
+}

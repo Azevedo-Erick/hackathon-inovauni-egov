@@ -1,0 +1,126 @@
+@page "/Portal/Index"
+@using HackatonInovaUniEGov.Shared.Layouts
+@using HackatonInovaUniEGov.Data
+@using HackatonInovaUniEGov.Models
+@layout PortalLayout
+@inject NavigationManager Navigation
+@inject ApplicationContext Context
+<div class="w-full flex flex-col">
+    <div class="self-center p-4 bg-black w-10/12 h-96 rounded-lg mt-8"></div>
+
+    <div>
+        <h3 class="m-4 text-center text-xl inter-family">Órgãos com melhores avaliações</h3>
+
+        <div class="flex flex-row overflow-x-auto gap-4  bg-header-auth rounded-lg p-4 m-4 ">
+             @for (var i = 0; i < 7; i++)
+             {
+                 <div style="min-width: 300px;" class="flex flex-justify flex-col  rounded-lg  justify-between bg-gray-200">
+                     <div class="w-full flex-row flex justify-between mb-8 p-4">
+                         <div class="px-4 py-2 bg-green-600 rounded-lg text-white">Palmas</div>
+                         <div class="px-4 py-2 bg-yellow-600 rounded-lg text-white">Transporte</div>
+
+                     </div>
+
+                     <div class="flex flex-col items-center text-center my-auto">
+                         <span>Empresa Brasileira de Correios e Telégrafos</span>
+                         <RadzenRating bind-Value="2" class="my-4" ReadOnly="true"/>
+                         <RadzenButton Variant="Radzen.Variant.Text" class="text-center inter-family"  Text="Ver detalhes"  Click=@(args => DetalhesInstituicao(i))   ButtonStyle="ButtonStyle.Warning"/>
+                         
+                     </div>
+
+
+                     <div class="h-16 flex items-center justify-center w-full bg-white rounded-b-xl mt-8">
+                         
+
+                         <RadzenButton Variant="Radzen.Variant.Text" class="text-center inter-family"  Text="Avaliar"  Click=@(args => AvaliarInstituicao(i))  ButtonStyle="ButtonStyle.Warning"/>
+
+                     </div>
+                 </div>
+             }
+        </div>
+
+
+        <div class="flex flex-col w-full items-center">
+
+            <h3 class="m-4 text-center text-xl inter-family">Órgãos</h3>
+            <div class="w-6/12">
+                <div class="flex flex-row w-full justify-between">
+
+
+                    <RadzenFormField class="w-6/12" Text="Nome" Variant="Radzen.Variant.Flat" Style="width: 100%;">
+                        <RadzenTextBox @bind-Value="email" Style="width: 100%;"/>
+                    </RadzenFormField>
+
+
+                    <RadzenButton class="w-3/12 ml-8" type="submit" Text="Pesquisar" ButtonStyle="ButtonStyle.Warning"/>
+              
+                    </div>
+
+            </div>
+        
+            
+            <div class="flex flex-row w-10/12 flex-wrap gap-4 bg-header-auth  justify-between rounded-lg p-4 m-4 ">
+                @for (var i = 0; i < 21; i++)
+                {
+                    <div class="w-80  flex flex-justify flex-col  rounded-lg  justify-between bg-gray-200">
+                        <div class="w-full flex-row flex justify-between mb-8 p-4">
+                            <div class="px-4 py-2 bg-green-600 rounded-lg text-white">Palmas</div>
+                            <div class="px-4 py-2 bg-yellow-600 rounded-lg text-white">Transporte</div>
+
+                        </div>
+
+                        <div class="flex flex-col items-center my-auto">
+                            <span>Empresa Brasileira de Correios e Telégrafos</span>
+                            <RadzenRating bind-Value="2" class="my-4" ReadOnly="true"/>
+                         <RadzenButton Variant="Radzen.Variant.Text" class="text-center inter-family"  Click=@(args => DetalhesInstituicao(i))   Text="Ver detalhes"  ButtonStyle="ButtonStyle.Warning"/>
+                            
+                        </div>
+
+
+                        <div class="h-16 flex items-center justify-center w-full bg-white rounded-b-xl mt-8">
+                                                     <RadzenButton Variant="Radzen.Variant.Text" class="text-center inter-family"  Click=@(args => AvaliarInstituicao(i)) Text="Avaliar"  ButtonStyle="ButtonStyle.Warning"/>
+
+
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+@code {
+    private string email { get; set; }
+    private string NomeFiltro { get; set; }
+
+    private List<ServicoPublico> ServicosPublicos { get; set; } = new();
+    private List<ServicoPublico> MelhoresServicosPublicos { get; set; } = new();
+
+    
+    private  void AvaliarInstituicao(int i)
+    {
+        Navigation.NavigateTo("/Portal/FormularioAvaliacaoInstituicao/"+i);
+    }
+    
+
+    private  void DetalhesInstituicao(int i)
+    {
+        Navigation.NavigateTo("/Portal/DetalhesInstituicao/"+i);
+    }
+    
+    protected  override async Task OnInitializedAsync()
+    {
+        QueryData();
+    }
+
+    private void QueryData()
+    {
+        ServicosPublicos = Context.ServicosPublicos.ToList();
+        MelhoresServicosPublicos = Context.ServicosPublicos.ToList();
+        
+    }
+
+}

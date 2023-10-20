@@ -1,0 +1,135 @@
+﻿@page "/"
+@using HackatonInovaUniEGov.Shared.Layouts
+
+
+@layout DefaultLayout
+@inject NavigationManager Navigation
+
+
+<div class="flex inter-family flex-col">
+    
+    @* <div class="flex p-4 w-full bg-gray-100 flex-row inter-family text-xl"> *@
+    @*     <a href="#beneficios" class="mr-4">Beneficios</a> *@
+    @*     <a href="#como_participar">Como participar</a> *@
+    @* </div> *@
+
+    <div class="w-11/12 my-4 rounded-lg bg-black h-96 self-center">
+        
+    </div>
+
+    <div class="w-full bg-header-auth mt-4" id="beneficios">
+        <h3 class="text-center text-white mt-4 text-3xl">Benefícios</h3>
+        
+        <div class="w-full justify-between p-4 flex flex-row">
+            <div class="flex-col flex rounded-lg border shadow bg-sky-50 p-4">
+                <div class="rounded-full flex justify-center items-center self-center bg-yellow-500 w-8 h-8 ">
+                    
+                <RadzenIcon Icon="attach_money" IconColor="@Radzen.Colors.White"/>
+
+                </div>
+                <p> Avalie e ganhe pontos</p>
+            </div>
+            
+            <div class="flex-col flex rounded-lg border shadow bg-sky-50 p-4">
+                     
+                <div class="rounded-full flex justify-center items-center self-center bg-yellow-500 w-8 h-8 ">
+                                    
+                                <RadzenIcon Icon="home" IconColor="@Radzen.Colors.White"/>
+                
+                                </div>
+                <p>  Desconto no IPTU
+                    
+</p>
+            </div>
+            
+              <div class="flex-col flex rounded-lg border shadow bg-sky-50 p-4">
+                           <div class="rounded-full flex justify-center items-center self-center bg-yellow-500 w-8 h-8 ">
+                                                               
+                                                           <RadzenIcon Icon="drive_eta" IconColor="@Radzen.Colors.White"/>
+                                           
+                                                           </div>
+                            <p> Desconto no IPVA
+                               
+</p>
+                        </div>
+            
+            <div class="flex-col flex rounded-lg border shadow bg-sky-50 p-4">
+                           
+                <div class="rounded-full flex justify-center items-center self-center bg-yellow-500 w-8 h-8 ">
+                                                                               
+                                                                           <RadzenIcon Icon="work" IconColor="@Radzen.Colors.White"/>
+                                                           
+                                                                           </div>
+                
+                <p>  Desconto no Imposto de renda
+                                
+</p>
+                        </div>
+        </div>
+    </div>
+
+    <div id="como_participar" class="w-full h-96 bg-white w-full mt-8 p-4 flex flex-col">
+        <h3 class="text-center text-3xl ">Como participar?</h3>
+        <div class="flex flex-row flex-row justify-between p-8 flex-wrap">
+            
+        <div class="rounded-lg flex flex-col justify-between w-1/4 h-96 shadow-xl border bg-header-auth">
+            <div class="my-auto text-center text-white">
+                
+                <h2 class="    text-3xl">1º Passo</h2>
+                <p class="text-xl mt-4">Realize o cadastro</p>
+            </div>
+            
+            <div class="h-1/2 flex flex-col justify-between p-4 text-justify w-full bg-sky-50">
+                <span>
+                    Clique em cadastrar. Preencha os campos socilitados, aceitando o termo de regulamento. 
+                </span>
+            <RadzenButton class="mt-4 py-4 self-center" Click="GoToRegistro" Text="Cadastre-se" ButtonStyle="ButtonStyle.Warning"/>
+        
+                </div>
+        </div>
+    
+        <div class="rounded-lg flex flex-col justify-between w-1/4 h-96 shadow-xl border bg-header-auth">
+                    <div class="my-auto text-center text-white">
+                        
+                        <h2 class="    text-3xl">2º Passo</h2>
+                        <p class="text-xl mt-4">
+Responda o Formulário </p>
+                    </div>
+                    
+                    <div class="h-1/2 flex flex-col justify-between p-4 text-justify w-full bg-sky-50">
+                        <span>
+                            Responda o formulário avaliando as instituições para ganhar pontos.
+                            </span>
+                  
+                        </div>
+                </div>
+        
+        <div class="rounded-lg flex flex-col justify-between w-1/4 h-96 shadow-xl border bg-header-auth">
+                    <div class="my-auto text-center text-white">
+                        
+                        <h2 class="    text-3xl">3º Passo</h2>
+                        <p class="text-xl mt-4">Troque os pontos </p>
+                    </div>
+                    
+                    <div class="h-1/2 flex flex-col justify-between p-4 text-justify w-full bg-sky-50">
+                        <span>
+                            Ao final do ano troque os pontos acumulados por benefícios.
+                            </span>
+                   
+                        </div>
+                </div>
+        </div>
+        
+    </div>
+    
+</div>
+<div class="h-64 w-full"></div>
+
+@code{
+
+    private void GoToRegistro()
+    {
+        Navigation.NavigateTo("/Auth/Cadastro");
+    }
+
+}

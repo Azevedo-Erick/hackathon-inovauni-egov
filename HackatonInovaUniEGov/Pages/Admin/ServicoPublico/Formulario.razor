@@ -1,0 +1,55 @@
+@page "/Admin/ServicoPublico/Formulario/{id:int?}"
+@using HackatonInovaUniEGov.Models
+@using HackatonInovaUniEGov.Shared.Layouts
+@using HackatonInovaUniEGov.Data
+@using Microsoft.EntityFrameworkCore
+@layout AdminLayout
+@inject ApplicationContext Context
+
+<div class="border rounded-lg p-4 flex flex-col shadow  m-4">
+    <h3 class="text-center inter-family text-3xl m-4">Formulario de Cadastro de Serviço Público</h3>
+    <RadzenFormField Text="Nome" class="mb-4" Variant="Radzen.Variant.Flat" Style="width: 100%;">
+   
+        <RadzenTextBox @bind-Value="ServicoPublico.Nome" Style="width: 100%;"/>
+    </RadzenFormField>
+    
+    <RadzenFormField Text="Pontos por Avaliar" class="mb-4" Variant="Radzen.Variant.Flat" Style="width: 100%;">
+       
+        <RadzenNumeric @bind-Value="ServicoPublico.PontosPorAvaliar" Style="width: 100%;"/>
+    </RadzenFormField>
+    
+     <RadzenDropDown @bind-Value=@ServicoPublico.Categoria Data=@Context.CategoriasServicoPublico TextProperty="Nome" Style="width: 100%; max-width: 400px;" />
+    
+    <RadzenButton class="ml-auto my-4 p-4" Variant="Radzen.Variant.Flat" Click=@(args => Salvar()) Text="Salvar" Icon="save" ButtonStyle="ButtonStyle.Success" />
+    
+</div>
+
+
+@code {
+    private ServicoPublico ServicoPublico { get; set; } = new ServicoPublico();
+   
+    [Parameter]
+    public int? Id { get; set; }
+    
+    private async Task Salvar()
+    {
+        ServicoPublico.ImageUrl = "aa";
+        if (Id == null)
+        {
+            await Context.ServicosPublicos.AddAsync(ServicoPublico);
+            await Context.SaveChangesAsync();
+            return;
+        }
+        Context.ServicosPublicos.Update(ServicoPublico);
+        Context.SaveChanges();
+    }
+
+    protected  override async Task OnInitializedAsync()
+    {
+        if (Id != null)
+        {
+            ServicoPublico = await Context.ServicosPublicos.Where(x => x.Id == Id).FirstOrDefaultAsync();
+            return;
+        }
+    }
+}

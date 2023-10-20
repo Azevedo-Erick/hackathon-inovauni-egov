@@ -1,0 +1,61 @@
+@page "/Auth/Cadastro"
+@using HackatonInovaUniEGov.Shared.Layouts
+@layout AuthLayout
+
+<div class="min-h-screen flex flex-column flex-col min-w-screen justify-center items-center">
+    <div class="w-5/12 h-8/12 border px-8 py-4 self-center justify-self-center rounded-lg shadow">
+        <h2 class="text-2xl text-center inter-family m-4">Cadastre-se</h2>
+        
+        <RadzenFormField Text="Nome" Variant="Radzen.Variant.Flat" Style="width: 100%;">
+            <RadzenTextBox @bind-Value="email" Style="width: 100%;"/>
+        </RadzenFormField>
+        
+        @* <RadzenFormField Text="Email" Variant="Radzen.Variant.Flat" Style="width: 100%;"> *@
+        @*     <RadzenTextBox @bind-Value="email" Style="width: 100%;"/> *@
+        @* </RadzenFormField> *@
+        @* *@
+        <RadzenFormField Text="CPF" class="my-4" Variant="Radzen.Variant.Flat" Style="width: 100%;">
+            <RadzenTextBox @bind-Value="email" Style="width: 100%;"/>
+        </RadzenFormField>
+ 
+        
+        <RadzenFormField Text="Email" Variant="Radzen.Variant.Flat" Style="width: 100%;">
+            <RadzenTextBox @bind-Value="email" Style="width: 100%;"/>
+        </RadzenFormField>
+        
+        <div class="flex flex-row justify-between my-4">
+            
+        <RadzenFormField Text="Senha" class="w-6/12" Variant="Radzen.Variant.Flat">
+            <RadzenPassword @bind-Value="password"/>
+        </RadzenFormField>
+        
+            <RadzenFormField Text="Confirmar Senha"  class="4/12" Variant="Radzen.Variant.Flat">
+                <RadzenPassword @bind-Value="password"/>
+            </RadzenFormField>
+            
+        </div>
+
+        <MudCheckBox @bind-Checked="@termosAceitos" Label="Li e estou de acordo com o Termo de Uso e Política de Privacidade"></MudCheckBox>
+      
+        
+        @if (!termosAceitos)
+        {
+            <RadzenButton class="mt-4 w-full"   type="submit" Text="Aceite os termos" ButtonStyle="ButtonStyle.Warning"/>
+        }
+        else
+        {
+            <RadzenButton class="mt-4 w-full"   type="submit" Text="Cadastrar" ButtonStyle="ButtonStyle.Warning"/>
+
+        }
+  <div class="cursor-pointer inter-family self-start my-2 text-center text-blue-700">
+              Tenho uma conta
+            </div>
+    </div>
+    
+</div>
+
+@code {
+    private string email;
+    private string password;
+    private bool termosAceitos;
+}

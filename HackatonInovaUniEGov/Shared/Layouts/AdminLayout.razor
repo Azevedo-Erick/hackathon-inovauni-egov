@@ -1,0 +1,67 @@
+@using HackatonInovaUniEGov.Providers
+@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+@inject AuthProvider AuthProvider
+
+
+@if (AuthProvider.GetAuthenticationStateAsync().Result.User.Identity!=null ||true)
+{
+    
+<div class="h-16 flex flex-row justify-between items-center px-4  bg-header-auth">
+    <p class="inter-family text-white ">Área administrativa</p>
+    
+
+    
+    <RadzenButton class=" w-1/12" Click="Sair" Text="Sair" ButtonStyle="ButtonStyle.Danger"/>
+
+    
+</div>
+    <div class="w-full h-4/12 flex flex-row">
+        <div class="w-2/12 h-screen bg-sky-50 p-4 flex flex-col justify-start items-center text-center border shadow">
+            <div class="flex flex-row items-center justify-center">
+               
+                <img src="images/logo_sol_tocantins.svg" class="w-12 h-12"/>
+                <div class="flex color-rose-700 inter-family text-uppercase flex-col text-center ml-2 text-black text-start text-bold  text-sm">
+                                   
+                    <p>Governo Do </p>
+                    <p >Tocantins</p>
+                </div>
+            </div>
+        
+            <a href="/Admin/Usuario/Listagem" class="w-full"><div class="px-8 py-2 bg-gray-400 rounded-lg w-full mt-4">Usuário</div></a>
+            <a href="/Admin/ServicoPublico/Listagem" class="w-full"><div class="px-8 py-2 bg-gray-400 w-full rounded-lg my-4">Serviços Públicos</div></a>
+            <a href="/Admin/CategoriaServicoPublico/Listagem" class="w-full"><div class="px-8 py-2 bg-gray-400 w-full rounded-lg">Categorias de Serviços Públicos</div></a>
+        
+        </div>
+        <div class="w-10/12">
+            @Body
+        
+        </div>
+    
+    </div>
+}else
+ {
+     <div class="w-screen h-screen flex items-center justify-center bg-slate-700">
+     <div class="h-96 w-1/4 shadow p-4 border rounded-xl bg-white items-center flex flex-col">
+         <h2 class="text-center text-3xl text-slate-700 mb-auto">Acesso não autorizado</h2>
+                
+         <RadzenIcon Icon="warning" Style="font-size: 96px;" class="text-4xl text-shadow-xl text-red-500  text-center" />
+                
+         <div class="px-4 py-8 bg-red-100 h-32 mt-auto mb-auto text-red-600 flex items-center text-xl rounded-lg">
+             Você não tem autorização para acessar essa página!
+         </div>
+         <RadzenButton class="mt-auto px-4 py-4" Click=@(args => Navigation.NavigateTo("/Auth/LoginAdmin")) Text="Voltar"  ButtonStyle="ButtonStyle.Danger"/>
+                
+     </div>
+     </div>
+
+ }
+
+@code {
+
+    private void Sair()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+}

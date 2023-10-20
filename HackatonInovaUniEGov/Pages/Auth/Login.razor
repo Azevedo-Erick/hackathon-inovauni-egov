@@ -1,0 +1,60 @@
+@page "/Auth/Login"
+@using HackatonInovaUniEGov.Shared.Layouts
+@layout AuthLayout
+@inject NavigationManager Navigation
+
+<div class="flex flex-row justify-between min-h-screen">
+    <div class="bg-header-auth p-4 flex items-center">
+        <div class="flex flex-col text-white justify-center items-center text-3xl">
+            
+            <img src="images/tribunal_icon.png" class="w-56"/>
+            <h3 class="w-1/2 text-center mt-4 text-bold">AVALIAÇÃO DOS SERVIÇOS PÚBLICOS</h3>
+        </div>
+        
+        </div>
+    <div class=" h-min-screen p-4 w-full h-full flex flex-col">
+        <div class="flex flex-row items-center justify-center">
+            <img src="images/logo_sol_tocantins.svg"/>
+            <div class="flex color-rose-700 inter-family text-uppercase flex-col text-center  text-bold ml-4">
+                        
+                <p class="text-2xl ">Governo Do </p>
+                <p class="text-4xl">Tocantins</p>
+            </div>
+
+        </div>
+        <div class="py-4 px-8 border border-black  rounded-lg  m-4 shadow flex flex-col space-between">
+            <h2 class="text-center text-3xl my-4 inter-family">Login</h2>
+            <RadzenFormField Text="Email" Variant="Radzen.Variant.Flat" Style="width: 100%;">
+                <RadzenTextBox @bind-Value="email" Style="width: 100%;"/>
+            </RadzenFormField>
+
+            <RadzenFormField Text="Senha" class="my-4" Variant="Radzen.Variant.Flat">
+                <RadzenPassword @bind-Value="password"/>
+            </RadzenFormField>
+
+            <div class="cursor-pointer inter-family self-start mb-2 ml-4 text-blue-700">
+               Recuperar minha senha
+            </div>
+
+
+            <RadzenButton class="mt-4 w-2/12 py-4 self-end" Click="Logar" Text="Login" ButtonStyle="ButtonStyle.Warning"/>
+
+            <div class="rounded-lg inter-family bg-gray-200 p-4 self-center text-center my-4 w-11/12">
+                <p>É novo por aqui?  <span class="text-yellow-600">Cadastre-se</span></p>
+            </div>
+
+        </div>
+        
+    </div>
+</div>
+
+@code {
+    private string email;
+    private string password;
+
+    private void Logar()
+    {
+        Navigation.NavigateTo("/Portal/Index");
+    }
+
+}

@@ -1,0 +1,65 @@
+@page "/Portal/Pontos"
+@using HackatonInovaUniEGov.Shared.Layouts
+@using HackatonInovaUniEGov.Data
+@inject ApplicationContext Context
+@layout PortalLayout
+
+
+<div class="flex flex-col h-min-screen w-min-screen">
+    <div class="p-4 m-4 border shadow justify-start items-center flex flex-col bg-header-auth w-10/12 self-center rounded-lg ">
+        <h2 class="text-3xl text-center inter-family text-white">Meus pontos</h2>
+         <RadzenButton Variant="Radzen.Variant.Filled" class="my-4"  Text="Ganhar Vantagens" ButtonStyle="ButtonStyle.Secondary" />
+         <div  class="bg-white w-full  w-full h-2 rounded-xl mb-4"></div>
+         
+         <div class="flex flex-col w-full justify-center items-center">
+             <img src="images/joia.png" class="h-32  my-8"/>
+             <div class="flex flex-row w-10/12 mt-4 self-center justify-between ">
+             <div class="flex flex-row mt-auto w-3/12">
+                 <div class="flex flex-col items-center gap-2 justify-content-center w-full">
+                     <p class="text-3xl text-white inter-family">5</p>
+                     <div class="w-full h-6 bg-yellow-800 rounded-lg"></div>
+                 </div>
+             </div>
+             
+             <div class="flex flex-row mt-auto w-3/12">
+                 <div class="flex flex-col items-center gap-2 justify-content-center w-full">
+                                         <p class="text-3xl text-white inter-family">10</p>
+                     <div class="w-full h-6 bg-slate-500 rounded-lg"></div>
+
+                     <div class="w-full h-6 bg-slate-500 rounded-lg"></div>
+                 </div>
+             </div>
+             
+                 <div class="flex flex-row mt-auto w-3/12">
+                     <div class="flex flex-col items-center gap-2 justify-content-center w-full">
+                                             <p class="text-3xl text-white inter-family">15</p>
+
+                         <div class="w-full h-6 bg-yellow-500 rounded-lg"></div>
+                         
+                         <div class="w-full h-6 bg-yellow-500 rounded-lg"></div>
+                         
+                         <div class="w-full h-6 bg-yellow-500 rounded-lg"></div>
+                     </div>
+                 </div>
+                 </div>
+                 
+         </div>
+    
+         <div  class="bg-white w-full my-8  w-full h-2 rounded-xl mb-4"></div>
+         <div class="flex w-full flex-row justify-between text-xl px-4 text-white"><span>Questionarios respondidos</span> <a class="text-slate-300">Ver tudo</a></div>
+         <div class="flex w-full flex-row justify-between text-xl px-4 text-white mt-4">
+             
+             <div>
+                 <p>23/07/23  15:28:56</p>
+                 <p>SEBRAE</p>
+             </div>
+             
+                 <p>+10 Pontos</p>
+             
+         </div>
+             
+         </div>
+</div>
+
+@code {
+}

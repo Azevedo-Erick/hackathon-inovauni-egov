@@ -1,0 +1,20 @@
+@inject NavigationManager Navigation
+
+<div class="w-screen h-screen flex items-center justify-center bg-slate-700">
+            <div class="h-96 w-1/4 shadow p-4 border rounded-xl bg-white items-center flex flex-col">
+                <h2 class="text-center text-3xl text-slate-700 mb-auto">Acesso não autorizado</h2>
+                
+                <RadzenIcon Icon="warning" Style="font-size: 96px;" class="text-4xl text-shadow-xl text-red-500  text-center" />
+                
+                <div class="px-4 py-8 bg-red-100 h-32 mt-auto mb-auto text-red-600 flex items-center text-xl rounded-lg">
+                    Você não tem autorização para acessar essa página!
+                </div>
+                <RadzenButton class="mt-auto px-4 py-4" Click=@(args => Navigation.NavigateTo("/observatorio/Auth/Login/")) Text="Voltar"  ButtonStyle="ButtonStyle.Danger"/>
+                
+            </div>
+                
+        </div>
+
+@code {
+    
+}

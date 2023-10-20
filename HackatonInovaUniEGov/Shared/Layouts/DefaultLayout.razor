@@ -1,0 +1,33 @@
+@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+
+<div class="bg-black text-end">
+                <a href="/Auth/LoginAdmin" class="text-white py-2  mr-4">Acesso Administrativo</a>
+    
+</div>
+<div class="h-16 flex flex-row justify-between items-center px-4  bg-header-auth">
+    <img src="images/logotipo_projeto.svg" class="h-32 w-32"/>
+    
+    <div class="flex flex-row items-center justify-center">
+        
+        <img src="images/logo_sol_tocantins.svg" class="w-12 h-12"/>
+        <div class="flex color-rose-700 inter-family text-uppercase flex-col text-center ml-2 text-white text-start text-bold  text-sm">
+                            
+            <p>Governo Do </p>
+            <p >Tocantins</p>
+        </div>
+    </div>
+    
+                <RadzenButton class=" inter-family" Click="GoToLogin" Text="Entrar" ButtonStyle="ButtonStyle.Warning"/>
+
+    
+</div>
+@Body
+
+
+@code {
+    private void GoToLogin()
+    {
+        Navigation.NavigateTo("/Auth/Login");
+    }
+}

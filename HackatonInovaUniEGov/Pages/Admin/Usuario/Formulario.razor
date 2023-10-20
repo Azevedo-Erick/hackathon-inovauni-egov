@@ -1,0 +1,69 @@
+@page "/Admin/Usuario/Formulario/{id:int?}"
+@using HackatonInovaUniEGov.Shared.Layouts
+@using HackatonInovaUniEGov.Data
+@using HackatonInovaUniEGov.Models
+@using Microsoft.EntityFrameworkCore
+
+@layout AdminLayout
+@inject ApplicationContext Context
+
+
+<div class="border rounded-lg p-4 flex flex-col shadow  m-4">
+    <h3 class="text-center inter-family text-3xl m-4">Formulario de Cadastro de Usuário</h3>
+    <RadzenFormField Text="Nome" class="mb-4" Variant="Radzen.Variant.Flat" Style="width: 100%;">
+        <RadzenTextBox @bind-Value="Usuario.Nome" Style="width: 100%;"/>
+    </RadzenFormField>
+    
+    <RadzenFormField Text="Email" class="mb-4" Variant="Radzen.Variant.Flat" Style="width: 100%;">
+        <RadzenTextBox @bind-Value="Usuario.Email" Style="width: 100%;"/>
+    </RadzenFormField>
+    
+    <RadzenFormField Text="Telefone" class="mb-4" Variant="Radzen.Variant.Flat" Style="width: 100%;">
+        <RadzenTextBox @bind-Value="Usuario.Telefone" Style="width: 100%;"/>
+    </RadzenFormField>
+    
+      <RadzenFormField Text="Senha" class="mb-4" Variant="Radzen.Variant.Flat" Style="width: 100%;">
+                        <RadzenTextBox @bind-Value="Usuario.Senha" Style="width: 100%;"/>
+                    </RadzenFormField>
+    
+    
+    <RadzenFormField Text="CPF" class="mb-4" Variant="Radzen.Variant.Flat" Style="width: 100%;">
+        <RadzenTextBox @bind-Value="Usuario.Cpf" Style="width: 100%;"/>
+    </RadzenFormField>
+    
+ <RadzenButton class="ml-auto my-4 p-4" Variant="Radzen.Variant.Flat" Click=@(args => Salvar()) Text="Salvar" Icon="save" ButtonStyle="ButtonStyle.Success" />
+    
+</div>
+
+@code {
+
+    [Parameter]
+    public int? Id { get; set; }
+
+    private string email { get; set; }
+    private Usuario Usuario { get; set; } = new Usuario();
+
+    private async Task Salvar()
+    {
+        if (Id == null)
+        {
+            await Context.Usuarios.AddAsync(Usuario);
+            await Context.SaveChangesAsync();
+            return;
+        }
+         Context.Usuarios.Update(Usuario);
+         Context.SaveChanges();
+
+    }
+    
+    protected  override async Task OnInitializedAsync()
+    {
+        if (Id != null)
+        {
+            Usuario = await Context.Usuarios.Where(x => x.Id == Id).FirstOrDefaultAsync();
+            Usuario.Senha = "";
+        }
+    }
+
+
+}
