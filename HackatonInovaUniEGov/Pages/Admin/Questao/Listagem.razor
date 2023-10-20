@@ -1,0 +1,115 @@
+@page "/Admin/Questao/Listagem"
+@using HackatonInovaUniEGov.Shared.Layouts
+@using HackatonInovaUniEGov.Data
+@using HackatonInovaUniEGov.Models
+@layout AdminLayout
+@inject ApplicationContext Context
+@inject NavigationManager Navigation
+@inject NotificationService NotificationService
+@inject IDialogService DialogService
+
+<div class="border rounded-lg p-4 flex flex-col shadow m-4">
+<h3 class="text-center text-3xl inter-family my-4">Listagem de Questões</h3>
+
+ <RadzenButton class="ml-auto my-4" Variant="Radzen.Variant.Flat" Click=@(args => GoToForm()) Text="Novo" Icon="add" ButtonStyle="ButtonStyle.Success" />
+<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+    Data="@Questoes" TItem="Questao" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+    <Columns>
+        <RadzenDataGridColumn TItem="Questao" Property="Id" Filterable="false" Title="ID" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="Questao" Property="Texto" Title="Titulo" Frozen="true" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center" >
+        </RadzenDataGridColumn>
+         <RadzenDataGridColumn TItem="Questao" Property="TipoPergunta" Title="Tipo de Pergunta" Frozen="true" Sortable="false" Filterable="false" Width="80px" TextAlign="TextAlign.Center" >
+                </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Questao"  Title="Ações" Width="160px" Sortable="false" Filterable="false">
+        
+        <Template Context="data">
+            <RadzenButton Click=@(args => Editar(data.Id)) Text="Editar" Icon="edit" ButtonStyle="ButtonStyle.Warning"/>
+            <RadzenButton Click=@(args => Deletar(data.Id)) Text="Excluir" Icon="delete" ButtonStyle="ButtonStyle.Danger"/>
+     
+        </Template>
+        </RadzenDataGridColumn>
+
+    </Columns>
+</RadzenDataGrid>
+</div>
+
+@code {
+
+    public List<Questao> Questoes { get; set; } = new();
+    
+    private async Task Editar(int valueId)
+    {
+        Navigation.NavigateTo("/Admin/Questao/Formulario/"+valueId);
+
+    }
+
+    private async Task Deletar(int valueId)
+    {
+        
+        bool? result = await DialogService.ShowMessageBox(
+            "Alerta",
+            "O elemento deletado não pode ser recuperado! Tem certeza que deseja continuar?",
+            yesText: "Sim!", cancelText: "Cancelar");
+
+        if (result != null)
+        {
+            try
+            {
+                var element = Context.Questoes.FirstOrDefault(x => x.Id == valueId);
+
+                if (element == null)
+                {
+                    return;
+                }
+
+                Context.Questoes.Remove(element);
+                await Context.SaveChangesAsync();
+                QueryData();
+                NotificationMessage message = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Sucesso!",
+                    Detail = "Deleção realizada com sucesso!",
+                    Duration = 4000
+                };
+                NotificationService.Notify(message);
+
+                QueryData();
+
+            }
+            catch (Exception e)
+            {
+                NotificationMessage message = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Atenção!",
+                    Detail = e.Message,
+                    Duration = 4000
+                };
+                NotificationService.Notify(message);
+            }
+        }
+
+        StateHasChanged();
+        
+       
+    }
+
+    private async Task GoToForm()
+    {
+        Navigation.NavigateTo("/Admin/Questao/Formulario/");
+
+    }
+    
+    protected  override async Task OnInitializedAsync()
+    {
+        QueryData();
+    }
+
+    private void QueryData()
+    {
+        Questoes = Context.Questoes.ToList();
+        
+    }
+
+}

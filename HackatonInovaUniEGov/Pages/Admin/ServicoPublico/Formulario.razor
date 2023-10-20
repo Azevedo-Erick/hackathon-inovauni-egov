@@ -12,18 +12,17 @@
     
     <div class="flex flex-row justify-between">
         
-    <div class="flex w-3/12 self-center border flex-col justify-center items-center shadow rounded-lg p-4">
+    <div class="flex w-4/12 self-center border flex-col justify-center items-center shadow rounded-lg p-4">
                             <h3 class="text-3xl text-slate-700 mb-4">Imagem da Instituição</h3>
                             <RadzenUpload Url="api/file/upload" Icon="upload" ChooseText="Enviar" Complete=@CompleteUpload>
                             </RadzenUpload>
-    
                             @if (ServicoPublico.ImageUrl != "")
                             {
                                 <img class="w-80 h-80 mt-4  rounded-lg border shadow " src="@ServicoPublico.ImageUrl" alt="Uploaded Image"/>
                             }
                             else
                             {
-                                <div class="w-80 h-80 mt-4 bg-slate-900 rounded-lg border shadow " src="@ServicoPublico.ImageUrl" alt="Uploaded Image"></div>
+                                <div class="w-80 h-80 mt-4 bg-slate-900 rounded-lg border shadow bg-black" ></div>
                             }
                         </div>
 

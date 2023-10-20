@@ -24,7 +24,7 @@
         <div>
             <RadzenButton Text="Meus Pontos" Click="GoToPontos" ButtonStyle="ButtonStyle.Secondary"/>
 
-            <RadzenButton Text="Sair" ButtonStyle="ButtonStyle.Danger"/>
+            <RadzenButton Text="Sair" Click="GoToInicio" ButtonStyle="ButtonStyle.Danger"/>
         </div>
 
 
@@ -64,7 +64,11 @@ else
     {
        Navigation.NavigateTo("/Portal/Pontos");
     }
-    
-    
+
+
+    private void GoToInicio()
+    {
+       Navigation.NavigateTo("/");
+    }
 
 }

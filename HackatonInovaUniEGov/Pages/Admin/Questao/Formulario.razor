@@ -1,0 +1,165 @@
+@page "/Admin/Questao/Formulario/{id:int?}"
+@using HackatonInovaUniEGov.Shared.Layouts
+@using HackatonInovaUniEGov.Data
+@using HackatonInovaUniEGov.Models
+@using Microsoft.EntityFrameworkCore
+@using System.Text.RegularExpressions
+@using System.Text
+@using System.Globalization
+@layout AdminLayout
+@inject ApplicationContext Context
+@inject NotificationService NotificationService
+<div class="border rounded-lg p-4 flex flex-col shadow  m-4">
+    <h3 class="text-center inter-family text-3xl m-4">Formulario de Categoria de Serviço Público</h3>
+ 
+         <RadzenFormField Text="Texto" class="mb-4" Variant="Radzen.Variant.Flat" Style="width: 100%;">
+             <RadzenTextBox @bind-Value="Questao.Texto" Style="width: 100%;"/>
+         </RadzenFormField>
+         
+         <RadzenFormField Text="Titulo para o portal" class="mb-4" Variant="Radzen.Variant.Flat" Style="width: 100%;">
+             <RadzenTextBox @bind-Value="Questao.TituloParaOPortal" Style="width: 100%;"/>
+         </RadzenFormField>
+    <div class="flex flex-row mx-4 my-4">
+        
+         <RadzenCheckBox @bind-Value=@Questao.MostarMediaNoPortal Name="CheckBox1" />
+             <RadzenLabel Text="Mostrar no Portal" Component="CheckBox1" Style="margin-left: 8px; vertical-align: middle;" />
+    </div>
+    
+    <div class="flex flex-col">
+        
+    <RadzenLabel Text="Categoria relacionada" Style="margin-left: 8px; vertical-align: middle;" />
+    
+    <RadzenDropDown @bind-Value=@Questao.CategoriaServicoPublico Data=@CategoriasServicoPublicos TextProperty="Nome" Style="width: 100%; max-width: 400px;" />
+    </div>
+
+         
+         <RadzenButton class="ml-auto my-4 p-4" Variant="Radzen.Variant.Flat" Click=@(args => Salvar()) Text="Salvar" Icon="save" ButtonStyle="ButtonStyle.Success" />
+    
+</div>
+
+
+@code {
+    private Questao Questao { get; set; } = new();
+    private List<CategoriaServicoPublico> CategoriasServicoPublicos = new List<CategoriaServicoPublico>();
+    
+    
+    [Parameter] 
+    public int? Id { get; set; }
+    
+    private async Task Salvar()
+    {
+        Questao.slug = GenerateSlug(Questao.Texto);
+        if (Id == null)
+        {
+            Cadastrar();
+            return;
+
+        }
+        Atualizar();
+    }
+
+    private async Task Cadastrar()
+    {
+        try
+        {
+            Context.Questoes.Add(Questao);
+            Context.SaveChanges();
+            NotificationMessage message = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Sucesso!",
+                Detail = "Cadastro realizado com sucesso!",
+                Duration = 4000
+            };
+            NotificationService.Notify(message);
+            Questao = new Questao();
+        }
+        catch (Exception e)
+        {
+            NotificationMessage message = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Erro!",
+                Detail = "Houve algum erro ao realizar o cadastro!",
+                Duration = 4000
+            };
+            NotificationService.Notify(message);
+        }
+    }
+    
+    public string GenerateSlug(string title)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+            return "";
+
+    // Remove espaços em branco, converte para minúsculas e remove caracteres especiais
+        string slug = RemoveDiacritics(title.ToLowerInvariant().Trim());
+
+    // Substitui espaços e caracteres especiais por hífens
+        slug = Regex.Replace(slug, @"[^a-z0-9\s-]", "");
+        slug = Regex.Replace(slug, @"\s+", " ").Trim();
+        slug = slug.Replace(" ", "-");
+
+        return slug;
+    }
+
+    // Remove diacríticos (acentos) de caracteres
+    private string RemoveDiacritics(string text)
+    {
+        string normalizedString = text.Normalize(NormalizationForm.FormD);
+        StringBuilder stringBuilder = new StringBuilder();
+
+        foreach (char c in normalizedString)
+        {
+            UnicodeCategory unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+            if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+            {
+                stringBuilder.Append(c);
+            }
+        }
+
+        return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+    }
+
+    
+    private async Task Atualizar()
+    {
+        try
+        {
+            Context.Questoes.Update(Questao);
+            Context.SaveChanges();
+            NotificationMessage message = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Sucesso!",
+                Detail = "Atualização realizada com sucesso!",
+                Duration = 4000
+            };
+            NotificationService.Notify(message);
+        }
+        catch (Exception e)
+        {
+            NotificationMessage message = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Erro!",
+                Detail = "Houve algum erro ao realizar o cadastro!",
+                Duration = 4000
+            };
+            NotificationService.Notify(message);
+        }
+    }
+    
+    protected  override async Task OnInitializedAsync()
+    {
+        if (Id != null)
+        {
+            var data = await Context.Questoes.Where(x => x.Id == Id).FirstOrDefaultAsync();
+            if (data != null)
+            {
+                Questao = data;
+            }
+        }
+    }
+
+}

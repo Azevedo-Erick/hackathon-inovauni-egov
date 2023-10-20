@@ -8,6 +8,8 @@
 @inject NavigationManager Navigation
 @inject AuthProvider AuthProvider
 @inject ApplicationContext Context
+@inject NotificationService NotificationService
+
 <div class="flex flex-row justify-between min-h-screen">
     <div class="bg-header-auth p-4 flex items-center">
         <div class="flex flex-col text-white justify-center items-center text-3xl">
@@ -58,28 +60,43 @@
 
     private async Task Logar()
     {
-        if (Context.Usuarios.FirstOrDefault(x => x.Email == "teste@mail.com") == null)
+        try
         {
-            
-        Context.Usuarios.Add(new Usuario
-        {
-Cpf = "000.000.000-00",
-            Email = "teste@mail.com",
-            Nome = "Teste",
-            Senha = "123",
-            Telefone = "(99) 99999-9999"
-        });
-        Context.SaveChanges();
-        }
 
-        await AuthProvider.Login(data.email, data.password);
-        var userIdentity = AuthProvider.GetAuthenticationStateAsync().Result.User.Identity;
-        if (userIdentity != null && userIdentity.IsAuthenticated)
-        {
-            
-        Navigation.NavigateTo("/Portal/Index");
-        }
+            if (Context.Usuarios.FirstOrDefault(x => x.Email == "teste@mail.com") == null)
+            {
+
+                Context.Usuarios.Add(new Usuario
+                {
+                    Cpf = "000.000.000-00",
+                    Email = "teste@mail.com",
+                    Nome = "Teste",
+                    Senha = "123",
+                    Telefone = "(99) 99999-9999"
+                });
+                Context.SaveChanges();
+            }
+
+            await AuthProvider.Login(data.email, data.password);
+            var userIdentity = AuthProvider.GetAuthenticationStateAsync().Result.User.Identity;
+            if (userIdentity != null && userIdentity.IsAuthenticated)
+            {
+
+                Navigation.NavigateTo("/Portal/Index");
+            }
 
         }
+        catch (Exception e)
+        {
+            NotificationMessage message = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Erro!",
+                Detail = "Aconteceu um erro ao tentar realizar o login!",
+                Duration = 4000
+            };
+            NotificationService.Notify(message);
+        }
+    }
 
 }
