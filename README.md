@@ -37,7 +37,6 @@ Se você está interessado em contribuir para este projeto, siga estas etapas:
 1. Clonagem do Repositório: Clone este repositório em sua máquina local usando o comando:
 
 ```
-bash
 git clone https://github.com/Azevedo-Erick/hackathon-inovauni-egov
 ```
 
@@ -47,7 +46,6 @@ git clone https://github.com/Azevedo-Erick/hackathon-inovauni-egov
 
 1. Com um terminal aberto na raiz do projeto execute:
 ```
-bash
 dotnet watch run
 ```
 
